@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Language Translation Tool</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f4f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            width: 550px;
+        }
+        h1 {
+            text-align: center;
+            color: #2d3748;
+        }
+        label {
+            font-weight: bold;
+            color: #4a5568;
+        }
+        textarea {
+            width: 100%;
+            height: 120px;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e0;
+            font-size: 15px;
+            margin-top: 8px;
+            box-sizing: border-box;
+        }
+        select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e0;
+            font-size: 15px;
+            margin-top: 8px;
+            box-sizing: border-box;
+        }
+        .btn-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        button {
+            flex: 1;
+            padding: 12px;
+            background-color: #4299e1;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #3182ce;
+        }
+        .btn-copy {
+            background-color: #48bb78;
+        }
+        .btn-copy:hover {
+            background-color: #38a169;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #ebf8ff;
+            border-radius: 8px;
+            font-size: 16px;
+            color: #2b6cb0;
+        }
+        .copied-msg {
+            color: green;
+            font-size: 13px;
+            margin-top: 5px;
+            display: none;
+        }
+        audio {
+            width: 100%;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌐 Language Translator</h1>
+
+        <form method="POST">
+            <label>Enter Text:</label><br>
+            <textarea name="text" placeholder="Type text here...">{{ request.form.get('text', '') }}</textarea>
+
+            <br><br>
+            <label>Select Source Language:</label>
+            <select name="src_lang">
+                <option value="auto">Auto Detect</option>
+                <option value="en">English</option>
+                <option value="te">Telugu</option>
+                <option value="hi">Hindi</option>
+                <option value="ta">Tamil</option>
+                <option value="fr">French</option>
+                <option value="de">German</option>
+                <option value="es">Spanish</option>
+                <option value="ja">Japanese</option>
+                <option value="zh-CN">Chinese</option>
+                <option value="ar">Arabic</option>
+            </select>
+
+            <br><br>
+            <label>Select Target Language:</label>
+            <select name="dest_lang">
+                <option value="te">Telugu</option>
+                <option value="hi">Hindi</option>
+                <option value="ta">Tamil</option>
+                <option value="fr">French</option>
+                <option value="de">German</option>
+                <option value="es">Spanish</option>
+                <option value="ja">Japanese</option>
+                <option value="zh-CN">Chinese</option>
+                <option value="ar">Arabic</option>
+                <option value="en">English</option>
+            </select>
+
+            <div class="btn-row">
+                <button type="submit">Translate 🚀</button>
+            </div>
+        </form>
+
+        {% if translated_text %}
+        <div class="result" id="resultBox">
+            <strong>Translated Text:</strong><br><br>
+            <span id="translatedOutput">{{ translated_text }}</span>
+        </div>
+
+        <div class="btn-row">
+            <button class="btn-copy" onclick="copyText()">📋 Copy</button>
+        </div>
+        <p class="copied-msg" id="copiedMsg">✅ Copied to clipboard!</p>
+
+        <audio controls autoplay>
+            <source src="/static/output.mp3" type="audio/mpeg">
+        </audio>
+        {% endif %}
+    </div>
+
+    <script>
+        function copyText() {
+            var text = document.getElementById('translatedOutput').innerText;
+            navigator.clipboard.writeText(text).then(function() {
+                var msg = document.getElementById('copiedMsg');
+                msg.style.display = 'block';
+                setTimeout(function() { msg.style.display = 'none'; }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
