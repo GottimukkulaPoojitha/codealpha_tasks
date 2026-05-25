@@ -12,7 +12,8 @@ from nltk.corpus import stopwords
 
 app = Flask(__name__)
 
-client = Groq(api_key="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")
+import os
+client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
 
 def preprocess(text):
     text = text.lower()
