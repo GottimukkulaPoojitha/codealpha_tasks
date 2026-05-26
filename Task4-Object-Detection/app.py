@@ -7,7 +7,7 @@ import uuid
 app = Flask(__name__)
 
 UPLOAD_FOLDER = 'static/uploads'
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 import urllib.request
 if not os.path.exists('yolov8n.pt'):
