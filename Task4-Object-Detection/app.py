@@ -9,6 +9,12 @@ app = Flask(__name__)
 UPLOAD_FOLDER = 'static/uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+import urllib.request
+if not os.path.exists('yolov8n.pt'):
+    urllib.request.urlretrieve(
+        'https://github.com/ultralytics/assets/releases/download/v8.3.0/yolov8n.pt',
+        'yolov8n.pt'
+    )
 model = YOLO('yolov8n.pt')
 
 @app.route('/', methods=['GET', 'POST'])
