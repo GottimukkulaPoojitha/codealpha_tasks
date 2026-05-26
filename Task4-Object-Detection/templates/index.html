@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Object Detection</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 40px;
+            width: 700px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: rgba(255,255,255,0.6);
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        .upload-area {
+            border: 2px dashed rgba(255,255,255,0.3);
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+
+        .upload-area:hover {
+            border-color: #e94560;
+            background: rgba(233,69,96,0.05);
+        }
+
+        .upload-icon {
+            font-size: 50px;
+            margin-bottom: 15px;
+        }
+
+        .upload-text {
+            color: rgba(255,255,255,0.7);
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .upload-subtext {
+            color: rgba(255,255,255,0.4);
+            font-size: 13px;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .detect-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #e94560, #0f3460);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .detect-btn:hover {
+            transform: scale(1.02);
+        }
+
+        .result-section {
+            margin-top: 30px;
+        }
+
+        .result-title {
+            color: white;
+            font-size: 18px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .result-image {
+            width: 100%;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .objects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+        }
+
+        .object-card {
+            background: rgba(233,69,96,0.15);
+            border: 1px solid rgba(233,69,96,0.3);
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .object-label {
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            text-transform: capitalize;
+        }
+
+        .object-confidence {
+            color: #e94560;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        .file-name {
+            color: rgba(255,255,255,0.7);
+            font-size: 13px;
+            margin-top: 10px;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            color: white;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Object Detection</h1>
+        <p class="subtitle">Upload an image or video — AI will detect objects instantly!</p>
+
+        <form method="POST" enctype="multipart/form-data" onsubmit="showLoading()">
+            <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                <div class="upload-icon">📁</div>
+                <div class="upload-text">Click to upload Image or Video</div>
+                <div class="upload-subtext">Supports: JPG, PNG, MP4, AVI, MOV</div>
+                <div class="file-name" id="fileName">No file selected</div>
+            </div>
+
+            <input type="file" id="fileInput" name="video" accept="image/*,video/*"
+                onchange="document.getElementById('fileName').innerText = this.files[0].name">
+
+            <button type="submit" class="detect-btn">🔍 Detect Objects</button>
+        </form>
+
+        <div class="loading" id="loading">
+            ⏳ Detecting objects... Please wait!
+        </div>
+
+        {% if result_image %}
+        <div class="result-section">
+            <p class="result-title">✅ Detection Complete!</p>
+            <img src="/static/uploads/{{ result_image }}" class="result-image" alt="Result">
+
+            {% if detected_objects %}
+            <p class="result-title">🎯 Detected Objects ({{ detected_objects|length }})</p>
+            <div class="objects-grid">
+                {% for obj in detected_objects %}
+                <div class="object-card">
+                    <div class="object-label">{{ obj.label }}</div>
+                    <div class="object-confidence">{{ obj.confidence }}%</div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p style="color: rgba(255,255,255,0.6); text-align: center;">No objects detected!</p>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        function showLoading() {
+            document.getElementById('loading').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
